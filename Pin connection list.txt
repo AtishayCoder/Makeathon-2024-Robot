@@ -1,0 +1,15 @@
+I2S - 
+
+V = 3.3v
+G = GND
+WS = 2
+LR = GND
+CK = 1
+DA = 3
+
+Buttons - 
+
+Push button 1:
+
+Right pins Up = 4
+Left pins Up = GND
