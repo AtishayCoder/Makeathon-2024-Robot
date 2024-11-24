@@ -13,3 +13,27 @@ Push button 1:
 
 Right pins Up = 4
 Left pins Up = GND
+
+LCD - 
+
+LCD1 [VSS] ------------- GND
+LCD2 [VDD] ------------- +5V
+LCD3 [V0] ------/\/\/\ [potentiometer]
+                   \---- GND
+LCD4 [RS] -------------- GPIO 6
+LCD5 [R/W] ------------- GND
+LCD6 [E] --------------- GPIO 7
+LCD7 [DB0]
+LCD8 [DB1]
+LCD9 [DB2]
+LCD10 [DB3]
+LCD11 [DB4] ------------ GPIO 8
+LCD12 [DB5] ------------ GPIO 9
+LCD13 [DB6] ------------ GPIO 10
+LCD14 [DB7] ------------ GPIO 11
+LCD15 [A] ------/\/\/\ [potentiometer]
+                   \---- +5V
+LCD16 [K] -------------- GND
+
+/\/\/\ = Resistor
+
