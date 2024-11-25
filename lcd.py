@@ -71,6 +71,7 @@ class LCD:
     
     def write_auto_move(self, message):
         """Write some text to the LCD screen. If text length exceeds 16 chars, automatically goes to next line."""
+        self.clear()
         if len(str(message)) > 32:
             raise IndexError(f"String is too big to write to LCD. String length = {len(str(message))}")
         elif len(str(message)) > 16:

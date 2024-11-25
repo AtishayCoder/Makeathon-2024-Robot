@@ -59,6 +59,38 @@ def connect_to_wifi():
     requests.post()
 
 
+def format_and_display_received_tests():
+    tests = requests.get(f"{SERVER_ENDPOINT}get-tests")
+    lcd.write_auto_move("Tests to be conducted.")
+    sleep(3)
+    final_string = ""
+    for i in tests:
+        if i != tests[-1]:
+            final_string = final_string + f"{i}, "
+        elif i == tests[-1]:
+            final_string = final_string + f"{i}"
+    
+    if len(final_string) > 32:
+        global s1, s2
+        # Find the last comma within the first 32 characters
+        last_comma_index = final_string[:32].rfind(',')
+        
+        if last_comma_index != -1:
+            # Create a new string up to the last comma
+            s1 = final_string[:last_comma_index]
+            # Create another variable holding the remaining value
+            s2 = final_string[last_comma_index + 1:]
+        else:
+            # If no comma is found, return the original string and an empty remaining value
+            s1 = final_string[:32]
+            s2 = final_string[32:]
+    
+    lcd.write_auto_move(s1)
+    sleep(5.5)
+    lcd.write_auto_move(s2)
+    sleep(4)
+
+
 def send():
     global is_recording, button_enabled
     lcd.write_auto_move("Please wait...")
@@ -71,15 +103,9 @@ def send():
     elif str(reply).startswith("result"):
         lcd.write_auto_move(str(reply.text).removeprefix("result/"))
         sleep(5)
-        tests = requests.get(f"{SERVER_ENDPOINT}get-tests")
-        lcd.write_auto_move("Tests to be conducted.")
-        sleep(5)
-
-
-        # TODO: Write code to display tests.
-
-
+        format_and_display_received_tests()
         lcd.write("Cleaning up...")
+        sleep("3")
         m.soft_reset()
 
 # Mainloop
