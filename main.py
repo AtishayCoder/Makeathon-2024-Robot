@@ -2,6 +2,7 @@ import network
 import machine as m
 from time import sleep
 from lcd import LCD, DEFAULT_PINS
+import ubinascii
 import urequests as requests
 
 # Microphone
@@ -29,6 +30,10 @@ def toggle_recording():
         is_recording = True
         audio_ready_to_send = False  # Reset the flag when starting a new recording
         lcd.write_auto_move("Recording...")
+
+
+def encode_to_b64(audio_data):
+    return ubinascii.b2a_base64(audio_data).decode('utf-8')
 
 
 # LCD
@@ -60,9 +65,7 @@ def send():
     button_enabled = False
     is_recording = False
     print("Sending data. Making POST request.")
-    reply = requests.get(f"{SERVER_ENDPOINT}post-recording", params={
-        "audio": str(audio_buffer)
-    })
+    reply = requests.get(f"{SERVER_ENDPOINT}post-recording", data=encode_to_b64(audio_data=audio_buffer))
     if str(reply).startswith("ask"):
         lcd.write_auto_move(str(reply.text).removeprefix("ask/"))
     elif str(reply).startswith("result"):
