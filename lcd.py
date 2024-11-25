@@ -1,6 +1,7 @@
 from machine import Pin
 from time import sleep
 
+
 class LCD:
     def __init__(self, pins):
         self.rs = Pin(pins["RS"], Pin.OUT)
@@ -21,11 +22,13 @@ class LCD:
         sleep(0.0005)
 
     def send_nibble(self, nibble):
+        """Send 4 bits of data to LCD."""
         for i in range(4):
             self.data_pins[i].value((nibble >> i) & 0x01)
         self.pulse_enable()
 
     def send_byte(self, data, is_data=True):
+        """Send 8 bits of data to LCD."""
         self.rs.value(is_data)
         self.send_nibble(data >> 4)  # Send higher nibble
         self.send_nibble(data & 0x0F)  # Send lower nibble
@@ -34,13 +37,16 @@ class LCD:
         self.send_byte(cmd, is_data=False)
 
     def write_char(self, char):
+        """Write one character"""
         self.send_byte(ord(char), is_data=True)
 
     def clear(self):
+        """Clear the LCD screen."""
         self.write_command(0x01)
         sleep(0.002)
 
     def init_lcd(self):
+        """Initialize LCD"""
         sleep(0.02)  # Wait for power-up
         self.send_nibble(0x03)
         sleep(0.005)
@@ -59,17 +65,31 @@ class LCD:
         self.write_command(0x06)
 
     def write(self, message):
+        """Write some text to the LCD screen."""
         for char in message:
             self.write_char(char)
+    
+    def write_auto_move(self, message):
+        """Write some text to the LCD screen. If text length exceeds 16 chars, automatically goes to next line."""
+        if len(str(message)) > 32:
+            raise IndexError(f"String is too big to write to LCD. String length = {len(str(message))}")
+        elif len(str(message)) > 16:
+            r1 = str(message)[:16].strip()
+            r2 = str(message)[16:].strip()
+            self.set_cursor(0, 0) # Go to first row, first position
+            self.write(r1)
+            self.set_cursor(1, 0) # Go to second row, first position
+            self.write(r2)
 
     def set_cursor(self, line, position):
+        """Change position of cursor."""
         # Line 1 starts at 0x00, Line 2 starts at 0x40
         addr = position + (0x40 if line == 1 else 0x00)
         self.write_command(0x80 | addr)
         
 
-# Pin configuration
-PINS = {
+# Default pin configuration
+DEFAULT_PINS = {
     "RS": 6,
     "E": 7,
     "DB4": 8,
