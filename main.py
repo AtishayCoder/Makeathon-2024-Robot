@@ -60,7 +60,7 @@ def connect_to_wifi():
 
 
 def format_and_display_received_tests():
-    tests = requests.get(f"{SERVER_ENDPOINT}get-tests")
+    tests = requests.get(f"{SERVER_ENDPOINT}get-tests")["Tests"]
     lcd.write_auto_move("Tests to be conducted.")
     sleep(3)
     final_string = ""
@@ -105,7 +105,8 @@ def send():
         sleep(5)
         format_and_display_received_tests()
         lcd.write("Cleaning up...")
-        sleep("3")
+        sleep(3)
+        requests.post(f"{SERVER_ENDPOINT}reset")
         m.soft_reset()
 
 # Mainloop
@@ -116,7 +117,7 @@ try:
 
     lcd.write_auto_move("Press the button to record.")
 
-    sleep(3000)
+    sleep(3)
     lcd.clear()
     
     lcd.write_auto_move("What is your gender?")
@@ -142,7 +143,6 @@ try:
             print("Captured", num_bytes_read, "bytes of audio data")
         elif audio_ready_to_send:
             send()
-            audio_ready_to_send = False
             
 except Exception as e:
     print(str(e))

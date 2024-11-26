@@ -73,7 +73,31 @@ class LCD:
         """Write some text to the LCD screen. If text length exceeds 16 chars, automatically goes to next line."""
         self.clear()
         if len(str(message)) > 32:
-            raise IndexError(f"String is too big to write to LCD. String length = {len(str(message))}")
+            result = []
+    
+            while len(final_string) > max_length:
+                # Find the last space within the first `max_length` characters
+                last_space_index = final_string[:max_length].rfind(' ')
+                
+                if last_space_index != -1:
+                    # Add the part up to the last space to the result list
+                    result.append(final_string[:last_space_index])
+                    # Remove the processed part from the string
+                    final_string = final_string[last_space_index + 1:]
+                else:
+                    # If no space is found, split at the `max_length` character
+                    result.append(final_string[:max_length])
+                    final_string = final_string[max_length:]
+    
+            # Add the remaining part of the string (if any)
+            if final_string:
+                result.append(final_string)
+
+            for i in result:
+                self.clear()
+                self.write_auto_move(i)
+                sleep(5)
+
         elif len(str(message)) > 16:
             r1 = str(message)[:16].strip()
             r2 = str(message)[16:].strip()
@@ -81,6 +105,12 @@ class LCD:
             self.write(r1)
             self.set_cursor(1, 0) # Go to second row, first position
             self.write(r2)
+        
+        elif len(str(message)) < 16:
+            self.write(message=message)
+        
+        elif len(str(message)) == "" or None:
+            self.write("")
 
     def set_cursor(self, line, position):
         """Change position of cursor."""
