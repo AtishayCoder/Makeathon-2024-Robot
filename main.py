@@ -60,35 +60,34 @@ def connect_to_wifi():
 
 
 def format_and_display_received_tests():
-    tests = requests.get(f"{SERVER_ENDPOINT}get-tests")["Tests"]
-    lcd.write_auto_move("Tests to be conducted.")
+    tests = requests.get(f"{SERVER_ENDPOINT}get-tests")
+    tests_list = tests
+    tests = ["The tests to be conducted are ", tests_list[0][1], " and ", tests_list[1][1]]
     sleep(3)
-    final_string = ""
-    for i in tests:
-        if i != tests[-1]:
-            final_string = final_string + f"{i}, "
-        elif i == tests[-1]:
-            final_string = final_string + f"{i}"
-    
-    if len(final_string) > 32:
-        global s1, s2
-        # Find the last comma within the first 32 characters
-        last_comma_index = final_string[:32].rfind(',')
+    for n in range(int(len(f"{tests[0]}{tests[1]}{tests[2]}{tests[3]}"))):
+        final_string = ""
+        for i in tests:
+            final_string += str(i)
         
-        if last_comma_index != -1:
-            # Create a new string up to the last comma
-            s1 = final_string[:last_comma_index]
-            # Create another variable holding the remaining value
-            s2 = final_string[last_comma_index + 1:]
-        else:
-            # If no comma is found, return the original string and an empty remaining value
-            s1 = final_string[:32]
-            s2 = final_string[32:]
-    
-    lcd.write_auto_move(s1)
-    sleep(5.5)
-    lcd.write_auto_move(s2)
-    sleep(4)
+        if len(final_string) > 32:
+            global s1, s2
+            # Find the last comma within the first 32 characters
+            last_comma_index = final_string[:32].rfind(',')
+            
+            if last_comma_index != -1:
+                # Create a new string up to the last comma
+                s1 = final_string[:last_comma_index]
+                # Create another variable holding the remaining value
+                s2 = final_string[last_comma_index + 1:]
+            else:
+                # If no comma is found, return the original string and an empty remaining value
+                s1 = final_string[:32]
+                s2 = final_string[32:]
+        
+        lcd.write_auto_move(s1)
+        sleep(5)
+        lcd.write_auto_move(s2)
+        sleep(5)
 
 
 def send():
